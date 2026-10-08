@@ -13,8 +13,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.testcontainers:testcontainers-postgresql:2.0.5")
-    compileOnly("org.liquibase:liquibase-core:4.33.0")
+    implementation("org.testcontainers:testcontainers-postgresql:2.0.5")
+    implementation("org.liquibase:liquibase-core:4.33.0")
+    runtimeOnly("org.postgresql:postgresql:42.7.13")
     testImplementation(gradleTestKit())
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
