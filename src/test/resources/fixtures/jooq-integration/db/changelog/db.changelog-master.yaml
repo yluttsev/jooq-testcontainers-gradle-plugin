@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-sample
+      author: integration-test
+      changes:
+        - createTable:
+            tableName: sample
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true

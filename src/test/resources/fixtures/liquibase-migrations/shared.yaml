@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-shared-table
+      author: integration-test
+      context: development
+      labels: codegen
+      changes:
+        - createTable:
+            tableName: shared_sample
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
+import ru.luttsev.jooq.testcontainers.migration.LiquibaseMigrationRunner;
 
 public final class PostgresContainerDriver implements Driver {
 
@@ -36,14 +37,29 @@ public final class PostgresContainerDriver implements Driver {
         }
         try {
             container.start();
-            Connection connection = container.createConnection("");
             if (options.logs(Level.INFO)) {
                 LOGGER.info("PostgreSQL ready in {} ms", elapsedMillis(startedAt));
             }
+            applyMigrations(container, options);
+            Connection connection = container.createConnection("");
             return ManagedConnection.wrap(connection, container, options);
-        } catch (RuntimeException | Error | SQLException failure) {
+        } catch (SQLException | RuntimeException | Error failure) {
             stopAfterFailure(container, options, failure);
             throw failure;
+        } catch (Exception failure) {
+            stopAfterFailure(container, options, failure);
+            throw new SQLException("Failed to prepare PostgreSQL for jOOQ code generation", failure);
+        }
+    }
+
+    private static void applyMigrations(PostgreSQLContainer<?> container, ConnectionOptions options) throws Exception {
+        long startedAt = System.nanoTime();
+        if (options.logs(Level.INFO)) {
+            LOGGER.info("Applying Liquibase changelog: {}", options.liquibase().changeLog());
+        }
+        LiquibaseMigrationRunner.apply(container, options.liquibase());
+        if (options.logs(Level.INFO)) {
+            LOGGER.info("Liquibase migrations applied in {} ms", elapsedMillis(startedAt));
         }
     }
 

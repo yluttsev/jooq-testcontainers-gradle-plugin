@@ -1,4 +1,4 @@
-package ru.luttsev.jooq.testcontainers;
+package ru.luttsev.jooq.testcontainers.foundation;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.io.TempDir;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static ru.luttsev.jooq.testcontainers.TestResources.readResource;
+import static ru.luttsev.jooq.testcontainers.support.TestResources.readResource;
 
 class PluginFoundationTest {
 
