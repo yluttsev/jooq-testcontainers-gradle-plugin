@@ -10,6 +10,7 @@ repositories {
 }
 
 dependencies {
+    compileOnly("org.testcontainers:testcontainers-postgresql:2.0.5")
     testImplementation(gradleTestKit())
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -17,8 +18,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 gradlePlugin {
