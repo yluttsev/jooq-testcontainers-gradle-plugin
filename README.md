@@ -1,15 +1,19 @@
 # jOOQ Testcontainers Gradle plugin
 
-The plugin will prepare a temporary PostgreSQL database from migrations for the
+The plugin prepares a temporary PostgreSQL database for the
 official `org.jooq.jooq-codegen-gradle` plugin. Code generation configuration stays
 in the standard `jooq` extension.
 
 ## Current scope
 
-The foundation provides the DSL and runtime dependency configuration. Container
-startup, Liquibase execution, JDBC integration and code generation inputs are not
-implemented yet. Applying this version does not change `jooqCodegen` or create a
-generation task.
+When the official jOOQ plugin is applied, the plugin configures its default
+`jooqCodegen` task with a JDBC driver that starts PostgreSQL at connection time.
+The driver closes the container when jOOQ closes the connection, including after
+generation errors. It also stops partially started containers if connection setup
+fails. No extra generation task is created. Liquibase migrations and named jOOQ
+executions are not integrated yet.
+The plugin sets the JDBC driver and URL in the standard jOOQ configuration;
+generator settings such as target package, schema, and forced types remain there.
 It applies `java-base` to enable Gradle's JVM dependency and Maven BOM handling;
 it does not create Java source sets.
 
@@ -90,18 +94,23 @@ migration adapter. End-to-end compatibility is not established by foundation tes
 
 `jooqMigrationRuntime` is also available for declarations in the standard
 `dependencies` block. The internal resolvable configuration is
-`jooqTestcontainersRuntimeClasspath`. No runtime dependencies are bundled into
-the Gradle plugin itself, and no repositories are added to the consuming project.
+`jooqTestcontainersRuntimeClasspath`. The plugin adds its own jar to jOOQ's
+codegen classpath so the generator can load the JDBC driver. Testcontainers and
+the PostgreSQL driver are resolved from the consuming project's repositories.
+No repositories are added to the consuming project.
 
 ## Development
 
-Build with the Gradle wrapper using JDK 17 or newer:
+Build with the Gradle wrapper using JDK 21 or newer:
 
 ```shell
 ./gradlew check
 ```
 
-The foundation targets Java 17 and is tested with Gradle 8.14.5. The eventual jOOQ
-runtime can require a newer JDK. TestKit tests use a local Maven fixture to verify
+The plugin targets Java 21 and is tested with Gradle 8.14.5. jOOQ 3.21.9 also
+requires Java 21. TestKit tests use a local Maven fixture to verify
 the Kotlin DSL, version catalog providers, replacement of default declarations,
-BOM resolution and configuration cache reuse for `help`. They do not require Docker.
+BOM resolution and configuration cache reuse for `help`. The jOOQ integration
+test checks the official plugin configuration and driver classpath without Docker.
+Set `JOOQ_TC_DOCKER_TEST=true` when running `test` to also execute jOOQ generation
+against a real `postgres:18` container and check cleanup after success and failure.
