@@ -11,7 +11,7 @@ Requires Java 21 and a running Docker daemon. Add both plugins to `build.gradle.
 ```kotlin
 plugins {
     id("org.jooq.jooq-codegen-gradle") version "3.21.9"
-    id("ru.luttsev.jooq-testcontainers") version "0.1.0"
+    id("io.github.yluttsev.jooq-testcontainers") version "0.1.0"
 }
 
 repositories {
