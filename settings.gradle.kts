@@ -1,0 +1,1 @@
+rootProject.name = "jooq-testcontainers-gradle-plugin"
