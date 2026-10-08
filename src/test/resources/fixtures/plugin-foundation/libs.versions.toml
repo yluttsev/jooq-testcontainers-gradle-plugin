@@ -1,0 +1,5 @@
+[libraries]
+liquibase-core = { module = "org.liquibase:liquibase-core", version = "4.32.0" }
+postgresql = { module = "org.postgresql:postgresql", version = "42.7.8" }
+testcontainers-bom = { module = "org.testcontainers:testcontainers-bom", version = "2.0.4" }
+liquibase-extension = { module = "example:extension", version = "1.0" }

@@ -1,0 +1,15 @@
+<packaging>pom</packaging>
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>%s</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers-postgresql</artifactId>
+            <version>%s</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
