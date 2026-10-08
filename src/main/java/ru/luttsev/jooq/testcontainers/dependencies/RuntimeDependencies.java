@@ -1,4 +1,4 @@
-package ru.luttsev.jooq.testcontainers;
+package ru.luttsev.jooq.testcontainers.dependencies;
 
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.ConfigurationContainer;
@@ -15,6 +15,10 @@ public class RuntimeDependencies {
     public static final String DEFAULT_LIQUIBASE = "org.liquibase:liquibase-core:4.33.0";
     public static final String DEFAULT_POSTGRES_DRIVER = "org.postgresql:postgresql:42.7.13";
     public static final String DEFAULT_TESTCONTAINERS_PLATFORM = "org.testcontainers:testcontainers-bom:2.0.5";
+    private static final String LIQUIBASE_CONFIGURATION = "jooqTestcontainersLiquibase";
+    private static final String POSTGRES_DRIVER_CONFIGURATION = "jooqTestcontainersPostgresDriver";
+    private static final String PLATFORM_CONFIGURATION = "jooqTestcontainersPlatform";
+    private static final String MODULES_CONFIGURATION = "jooqTestcontainersModules";
 
     private final DependencyHandler handler;
     private final Configuration liquibase;
@@ -23,16 +27,17 @@ public class RuntimeDependencies {
 
     public RuntimeDependencies(ConfigurationContainer configurations, DependencyHandler handler, ObjectFactory objects) {
         this.handler = handler;
-        liquibase = scope(configurations, "jooqTestcontainersLiquibase");
-        postgresDriver = scope(configurations, "jooqTestcontainersPostgresDriver");
-        testcontainersPlatform = scope(configurations, "jooqTestcontainersPlatform");
+        liquibase = scope(configurations, LIQUIBASE_CONFIGURATION);
+        postgresDriver = scope(configurations, POSTGRES_DRIVER_CONFIGURATION);
+        testcontainersPlatform = scope(configurations, PLATFORM_CONFIGURATION);
         Configuration migrations = scope(configurations, MIGRATION_CONFIGURATION);
-        Configuration modules = scope(configurations, "jooqTestcontainersModules");
+        Configuration modules = scope(configurations, MODULES_CONFIGURATION);
 
         liquibase.defaultDependencies(dependencies -> dependencies.add(handler.create(DEFAULT_LIQUIBASE)));
         postgresDriver.defaultDependencies(dependencies -> dependencies.add(handler.create(DEFAULT_POSTGRES_DRIVER)));
         testcontainersPlatform.defaultDependencies(dependencies ->
-                dependencies.add(handler.platform(DEFAULT_TESTCONTAINERS_PLATFORM)));
+                dependencies.add(handler.platform(DEFAULT_TESTCONTAINERS_PLATFORM))
+        );
         handler.add(modules.getName(), "org.testcontainers:testcontainers");
         handler.add(modules.getName(), "org.testcontainers:testcontainers-postgresql");
 

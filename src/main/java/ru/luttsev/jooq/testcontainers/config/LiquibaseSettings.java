@@ -1,4 +1,4 @@
-package ru.luttsev.jooq.testcontainers;
+package ru.luttsev.jooq.testcontainers.config;
 
 import org.gradle.api.file.ConfigurableFileCollection;
 import org.gradle.api.file.ProjectLayout;
