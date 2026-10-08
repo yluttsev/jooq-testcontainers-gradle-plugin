@@ -1,5 +1,8 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     `java-gradle-plugin`
+    id("com.gradle.plugin-publish") version "2.2.1"
 }
 
 group = "ru.luttsev"
@@ -24,12 +27,22 @@ java {
 }
 
 gradlePlugin {
+    website.set("https://github.com/yluttsev/jooq-testcontainers-gradle-plugin")
+    vcsUrl.set("https://github.com/yluttsev/jooq-testcontainers-gradle-plugin")
+
     plugins {
         create("jooqTestcontainers") {
             id = "ru.luttsev.jooq-testcontainers"
             implementationClass = "ru.luttsev.jooq.testcontainers.JooqTestcontainersPlugin"
             displayName = "jOOQ Testcontainers"
             description = "Prepares a temporary PostgreSQL database for jOOQ code generation."
+            tags.set(listOf("jooq", "testcontainers", "postgresql", "liquibase", "codegen"))
+
+            compatibility {
+                features {
+                    configurationCache = false
+                }
+            }
         }
     }
 }
