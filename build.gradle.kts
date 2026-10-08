@@ -5,7 +5,7 @@ plugins {
     id("com.gradle.plugin-publish") version "2.2.1"
 }
 
-group = "ru.luttsev"
+group = "io.github.yluttsev"
 version = "0.1.0"
 
 repositories {
@@ -32,8 +32,8 @@ gradlePlugin {
 
     plugins {
         create("jooqTestcontainers") {
-            id = "ru.luttsev.jooq-testcontainers"
-            implementationClass = "ru.luttsev.jooq.testcontainers.JooqTestcontainersPlugin"
+            id = "io.github.yluttsev.jooq-testcontainers"
+            implementationClass = "io.github.yluttsev.jooq.testcontainers.JooqTestcontainersPlugin"
             displayName = "jOOQ Testcontainers"
             description = "Prepares a temporary PostgreSQL database for jOOQ code generation."
             tags.set(listOf("jooq", "testcontainers", "postgresql", "liquibase", "codegen"))

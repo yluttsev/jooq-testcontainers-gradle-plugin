@@ -1,6 +1,6 @@
 plugins {
     id("org.jooq.jooq-codegen-gradle") version "3.21.9"
-    id("ru.luttsev.jooq-testcontainers")
+    id("io.github.yluttsev.jooq-testcontainers")
 }
 
 repositories {

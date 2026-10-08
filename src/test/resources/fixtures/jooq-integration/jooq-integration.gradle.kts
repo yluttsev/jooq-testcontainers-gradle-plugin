@@ -3,7 +3,7 @@ import java.net.URLClassLoader
 
 plugins {
     id("org.jooq.jooq-codegen-gradle") version "3.21.9"
-    id("ru.luttsev.jooq-testcontainers")
+    id("io.github.yluttsev.jooq-testcontainers")
 }
 
 repositories {
@@ -29,7 +29,7 @@ jooq {
 tasks.named("jooqCodegen").get()
 val jooqExtension = extensions.getByType<CodegenPluginExtension>()
 val jdbc = jooqExtension.executions.getByName("").configuration.jdbc
-check(jdbc.driver == "ru.luttsev.jooq.testcontainers.jdbc.PostgresContainerDriver")
+check(jdbc.driver == "io.github.yluttsev.jooq.testcontainers.jdbc.PostgresContainerDriver")
 check(jdbc.url.startsWith("jdbc:jooq-testcontainers:postgresql:///codegen?image=postgres%3A18-alpine"))
 check(jdbc.url.contains("changeLog=db%2Fchangelog%2Fdb.changelog-master.yaml"))
 check(jooqExtension.executions.getByName("").configuration.generator.target.packageName == "example.generated")
@@ -44,7 +44,7 @@ tasks.register("verifyDriverClasspath") {
         check(files.any { it.name.startsWith("postgresql-") })
         URLClassLoader(files.map { it.toURI().toURL() }.toTypedArray(),
             CodegenPluginExtension::class.java.classLoader).use { loader ->
-            check(loader.loadClass("ru.luttsev.jooq.testcontainers.jdbc.PostgresContainerDriver") != null)
+            check(loader.loadClass("io.github.yluttsev.jooq.testcontainers.jdbc.PostgresContainerDriver") != null)
         }
     }
 }

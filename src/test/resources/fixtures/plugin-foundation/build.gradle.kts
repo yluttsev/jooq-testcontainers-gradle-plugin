@@ -1,5 +1,5 @@
 plugins {
-    id("ru.luttsev.jooq-testcontainers")
+    id("io.github.yluttsev.jooq-testcontainers")
 }
 
 repositories {
