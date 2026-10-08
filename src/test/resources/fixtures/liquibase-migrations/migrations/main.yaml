@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-configured-table
+      author: integration-test
+      context: development
+      labels: codegen
+      changes:
+        - createTable:
+            tableName: ${tableName}
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+  - changeSet:
+      id: skip-other-context
+      author: integration-test
+      context: production
+      labels: other
+      changes:
+        - createTable:
+            tableName: skipped_sample
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+  - include:
+      file: shared.yaml

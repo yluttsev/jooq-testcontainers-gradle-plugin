@@ -1,8 +1,10 @@
 package ru.luttsev.jooq.testcontainers.integration;
 
+import java.io.File;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Map;
 import org.gradle.api.GradleException;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
@@ -19,6 +21,11 @@ public final class JooqCodegenIntegration {
     private static final String JDBC_URL_PREFIX = "jdbc:jooq-testcontainers:postgresql:///codegen?";
     private static final String IMAGE_INPUT = "jooqTestcontainers.postgresImage";
     private static final String TIMEOUT_INPUT = "jooqTestcontainers.startupTimeout";
+    private static final String CHANGE_LOG_INPUT = "jooqTestcontainers.changeLog";
+    private static final String SEARCH_PATH_INPUT = "jooqTestcontainers.searchPath";
+    private static final String CONTEXTS_INPUT = "jooqTestcontainers.contexts";
+    private static final String LABELS_INPUT = "jooqTestcontainers.labels";
+    private static final String PARAMETERS_INPUT = "jooqTestcontainers.parameters";
     private static final Duration MINIMUM_TIMEOUT = Duration.ofSeconds(1);
 
     private final Project project;
@@ -48,8 +55,17 @@ public final class JooqCodegenIntegration {
 
     private void configureTask(Task task, Object jooq) {
         JooqJdbcConfiguration.configure(jooq, jdbcUrl());
+        registerInputs(task);
+    }
+
+    private void registerInputs(Task task) {
         task.getInputs().property(IMAGE_INPUT, extension.getPostgres().getImage());
         task.getInputs().property(TIMEOUT_INPUT, extension.getPostgres().getStartupTimeout());
+        task.getInputs().property(CHANGE_LOG_INPUT, extension.getLiquibase().getChangeLog());
+        task.getInputs().files(extension.getLiquibase().getSearchPath()).withPropertyName(SEARCH_PATH_INPUT);
+        task.getInputs().property(CONTEXTS_INPUT, extension.getLiquibase().getContexts().getOrElse(""));
+        task.getInputs().property(LABELS_INPUT, extension.getLiquibase().getLabels().getOrElse(""));
+        task.getInputs().property(PARAMETERS_INPUT, extension.getLiquibase().getParameters());
     }
 
     private String jdbcUrl() {
@@ -57,11 +73,36 @@ public final class JooqCodegenIntegration {
         Duration timeout = extension.getPostgres().getStartupTimeout().get();
         validate(image, timeout);
 
-        return JDBC_URL_PREFIX
+        StringBuilder url = new StringBuilder(JDBC_URL_PREFIX
                 + "image=" + URLEncoder.encode(image, StandardCharsets.UTF_8)
                 + "&startupTimeoutSeconds=" + Math.max(1, timeout.toSeconds())
                 + "&logLevel=" + extension.getLogging().getLevel().get().name()
-                + "&loggingEnabled=" + extension.getLogging().getEnabled().get();
+                + "&loggingEnabled=" + extension.getLogging().getEnabled().get());
+        appendLiquibaseOptions(url);
+        return url.toString();
+    }
+
+    private void appendLiquibaseOptions(StringBuilder url) {
+        appendOption(url, "changeLog", extension.getLiquibase().getChangeLog().get());
+        appendOption(url, "contexts", extension.getLiquibase().getContexts().getOrElse(""));
+        appendOption(url, "labels", extension.getLiquibase().getLabels().getOrElse(""));
+
+        var searchPaths = extension.getLiquibase().getSearchPath().getFiles().stream()
+                .map(File::getAbsolutePath)
+                .toList();
+        for (int index = 0; index < searchPaths.size(); index++) {
+            appendOption(url, "searchPath." + index, searchPaths.get(index));
+        }
+        extension.getLiquibase().getParameters().get().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> appendOption(url, "parameter." + entry.getKey(), entry.getValue()));
+    }
+
+    private static void appendOption(StringBuilder url, String name, String value) {
+        url.append('&')
+                .append(URLEncoder.encode(name, StandardCharsets.UTF_8))
+                .append('=')
+                .append(URLEncoder.encode(value, StandardCharsets.UTF_8));
     }
 
     private static void validate(String image, Duration timeout) {

@@ -7,6 +7,16 @@ repositories {
     mavenCentral()
 }
 
+jooqTestcontainers {
+    liquibase {
+        changeLog.set("migrations/main.yaml")
+        searchPath.setFrom("src/integration/resources", "src/integration/shared")
+        contexts.set("development")
+        labels.set("codegen")
+        parameters.put("tableName", "configured_sample")
+    }
+}
+
 jooq {
     configuration {
         generator {
