@@ -13,6 +13,7 @@ import ru.luttsev.jooq.testcontainers.JooqTestcontainersPlugin;
 import ru.luttsev.jooq.testcontainers.config.JooqTestcontainersExtension;
 import ru.luttsev.jooq.testcontainers.dependencies.RuntimeDependencies;
 
+/** Connects the official {@code jooqCodegen} task to this plugin's runtime. */
 public final class JooqCodegenIntegration {
 
     private static final String JOOQ_PLUGIN_ID = "org.jooq.jooq-codegen-gradle";
@@ -24,11 +25,18 @@ public final class JooqCodegenIntegration {
     private final Project project;
     private final JooqTestcontainersExtension extension;
 
+    /**
+     * Creates the integration for one Gradle project.
+     *
+     * @param project project containing both plugins
+     * @param extension user settings for the temporary database
+     */
     public JooqCodegenIntegration(Project project, JooqTestcontainersExtension extension) {
         this.project = project;
         this.extension = extension;
     }
 
+    /** Registers configuration when the official jOOQ plugin is applied. */
     public void register() {
         project.getPluginManager().withPlugin(JOOQ_PLUGIN_ID, ignored -> configureJooqPlugin());
     }

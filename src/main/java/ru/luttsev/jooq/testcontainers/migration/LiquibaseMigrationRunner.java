@@ -11,11 +11,19 @@ import liquibase.exception.LiquibaseException;
 import liquibase.resource.SearchPathResourceAccessor;
 import org.testcontainers.containers.PostgreSQLContainer;
 
+/** Applies a Liquibase changelog to a started PostgreSQL container. */
 public final class LiquibaseMigrationRunner {
 
     private LiquibaseMigrationRunner() {
     }
 
+    /**
+     * Applies migrations before the code generator receives its database connection.
+     *
+     * @param container started PostgreSQL container
+     * @param options changelog location and Liquibase filters
+     * @throws Exception if resource loading, connection setup, or migration fails
+     */
     public static void apply(PostgreSQLContainer<?> container, LiquibaseOptions options) throws Exception {
         try (Connection connection = container.createConnection("");
              SearchPathResourceAccessor resources = resourceAccessor(options)) {

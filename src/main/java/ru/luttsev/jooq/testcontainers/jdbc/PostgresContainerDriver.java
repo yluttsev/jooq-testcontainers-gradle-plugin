@@ -13,9 +13,17 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 import ru.luttsev.jooq.testcontainers.migration.LiquibaseMigrationRunner;
 
+/**
+ * JDBC driver used by jOOQ code generation to start and manage a temporary
+ * PostgreSQL container. Closing the returned connection stops the container.
+ */
 public final class PostgresContainerDriver implements Driver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresContainerDriver.class);
+
+    /** Creates the driver loaded by the jOOQ code generator. */
+    public PostgresContainerDriver() {
+    }
 
     @Override
     public boolean acceptsURL(String url) {

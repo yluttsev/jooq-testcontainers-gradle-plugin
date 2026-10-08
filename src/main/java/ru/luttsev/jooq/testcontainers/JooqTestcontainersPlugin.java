@@ -6,9 +6,17 @@ import ru.luttsev.jooq.testcontainers.config.JooqTestcontainersExtension;
 import ru.luttsev.jooq.testcontainers.dependencies.RuntimeDependencies;
 import ru.luttsev.jooq.testcontainers.integration.JooqCodegenIntegration;
 
+/**
+ * Connects the official jOOQ code generation task to a temporary PostgreSQL database.
+ * The database is prepared with Liquibase migrations before code generation starts.
+ */
 public class JooqTestcontainersPlugin implements Plugin<Project> {
 
     private static final String EXTENSION_NAME = "jooqTestcontainers";
+
+    /** Creates the plugin entry point used by Gradle. */
+    public JooqTestcontainersPlugin() {
+    }
 
     @Override
     public void apply(Project project) {
