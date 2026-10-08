@@ -8,10 +8,11 @@ in the standard `jooq` extension.
 
 When the official jOOQ plugin is applied, the plugin configures its default
 `jooqCodegen` task with a JDBC driver that starts PostgreSQL at connection time.
-The driver closes the container when jOOQ closes the connection, including after
-generation errors. It also stops partially started containers if connection setup
-fails. No extra generation task is created. Liquibase migrations and named jOOQ
-executions are not integrated yet.
+After the container starts, Liquibase applies the configured changelog before jOOQ
+connects. The driver closes the container when jOOQ closes the connection,
+including after generation errors. It also stops the container if migration or
+connection setup fails. No extra generation task is created. Named jOOQ executions
+are not integrated yet.
 The plugin sets the JDBC driver and URL in the standard jOOQ configuration;
 generator settings such as target package, schema, and forced types remain there.
 It applies `java-base` to enable Gradle's JVM dependency and Maven BOM handling;
@@ -89,8 +90,8 @@ Initial defaults:
 
 The BOM supplies versions for the `testcontainers` and
 `testcontainers-postgresql` modules (Testcontainers 2.x artifact names).
-Overrides must be compatible with these modules and, once implemented, the
-migration adapter. End-to-end compatibility is not established by foundation tests.
+Overrides must be compatible with these modules and the Liquibase adapter.
+The Docker integration tests cover the default dependency versions.
 
 `jooqMigrationRuntime` is also available for declarations in the standard
 `dependencies` block. The internal resolvable configuration is
@@ -112,5 +113,6 @@ requires Java 21. TestKit tests use a local Maven fixture to verify
 the Kotlin DSL, version catalog providers, replacement of default declarations,
 BOM resolution and configuration cache reuse for `help`. The jOOQ integration
 test checks the official plugin configuration and driver classpath without Docker.
-Set `JOOQ_TC_DOCKER_TEST=true` when running `test` to also execute jOOQ generation
-against a real `postgres:18` container and check cleanup after success and failure.
+Set `JOOQ_TC_DOCKER_TEST=true` when running `test` to execute Liquibase migrations
+and jOOQ generation against a real `postgres:18` container and check cleanup after
+success and failure.
