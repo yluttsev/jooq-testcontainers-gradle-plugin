@@ -100,6 +100,16 @@ codegen classpath so the generator can load the JDBC driver. Testcontainers and
 the PostgreSQL driver are resolved from the consuming project's repositories.
 No repositories are added to the consuming project.
 
+## Code generation inputs
+
+The plugin registers the PostgreSQL image and startup timeout, Liquibase changelog,
+search path contents, contexts, labels, and parameters as inputs of the standard
+`jooqCodegen` task. The official jOOQ plugin tracks its generator configuration
+and codegen classpath. An unchanged build can skip code generation; changing a
+changelog included from a search root runs it again. Each configured search root
+is tracked as a whole, so changing another file in that root can also rerun the
+task.
+
 ## Development
 
 Build with the Gradle wrapper using JDK 21 or newer:

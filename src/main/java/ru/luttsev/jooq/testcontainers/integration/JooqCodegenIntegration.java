@@ -19,13 +19,6 @@ public final class JooqCodegenIntegration {
     private static final String JOOQ_CODEGEN = "jooqCodegen";
     private static final String JOOQ_EXTENSION = "jooq";
     private static final String JDBC_URL_PREFIX = "jdbc:jooq-testcontainers:postgresql:///codegen?";
-    private static final String IMAGE_INPUT = "jooqTestcontainers.postgresImage";
-    private static final String TIMEOUT_INPUT = "jooqTestcontainers.startupTimeout";
-    private static final String CHANGE_LOG_INPUT = "jooqTestcontainers.changeLog";
-    private static final String SEARCH_PATH_INPUT = "jooqTestcontainers.searchPath";
-    private static final String CONTEXTS_INPUT = "jooqTestcontainers.contexts";
-    private static final String LABELS_INPUT = "jooqTestcontainers.labels";
-    private static final String PARAMETERS_INPUT = "jooqTestcontainers.parameters";
     private static final Duration MINIMUM_TIMEOUT = Duration.ofSeconds(1);
 
     private final Project project;
@@ -55,17 +48,7 @@ public final class JooqCodegenIntegration {
 
     private void configureTask(Task task, Object jooq) {
         JooqJdbcConfiguration.configure(jooq, jdbcUrl());
-        registerInputs(task);
-    }
-
-    private void registerInputs(Task task) {
-        task.getInputs().property(IMAGE_INPUT, extension.getPostgres().getImage());
-        task.getInputs().property(TIMEOUT_INPUT, extension.getPostgres().getStartupTimeout());
-        task.getInputs().property(CHANGE_LOG_INPUT, extension.getLiquibase().getChangeLog());
-        task.getInputs().files(extension.getLiquibase().getSearchPath()).withPropertyName(SEARCH_PATH_INPUT);
-        task.getInputs().property(CONTEXTS_INPUT, extension.getLiquibase().getContexts().getOrElse(""));
-        task.getInputs().property(LABELS_INPUT, extension.getLiquibase().getLabels().getOrElse(""));
-        task.getInputs().property(PARAMETERS_INPUT, extension.getLiquibase().getParameters());
+        CodegenInputs.register(task, extension);
     }
 
     private String jdbcUrl() {
